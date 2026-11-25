@@ -65,7 +65,8 @@ def test_package_metadata_uses_the_public_sr_identity():
     assert metadata["project"]["name"] == "kandinsky6-sr"
     assert metadata["tool"]["comfy"]["PublisherId"] == "kandinskylab"
     assert metadata["tool"]["comfy"]["DisplayName"] == "Kandinsky6 SR"
-    assert metadata["project"]["urls"]["Documentation"].endswith("kandinsky-6-sr/tree/main/comfyui")
+    assert metadata["project"]["urls"]["Repository"] == "https://github.com/kandinskylab/kandinsky-video-sr"
+    assert metadata["project"]["urls"]["Documentation"].endswith("kandinsky-video-sr/tree/main/comfyui")
     assert "kandinsky-6-sr" not in metadata["project"]["dependencies"]
 
 
