@@ -134,32 +134,32 @@
         "cnr_id": "comfy-core",
         "models": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/transformer/diffusion_pytorch_model.safetensors",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/transformer/diffusion_pytorch_model.safetensors",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors",
             "directory": "diffusion_models"
           }
         ],
         "kandinsky6_required_files": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/transformer/config.json",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/transformer/config.json",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/transformer/config.json",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/transformer/config.json",
             "directory": "diffusion_models"
           },
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/model_index.json",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/model_index.json",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/model_index.json",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/model_index.json",
             "directory": "diffusion_models"
           },
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/scheduler/scheduler_config.json",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/scheduler/scheduler_config.json",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/scheduler/scheduler_config.json",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/scheduler/scheduler_config.json",
             "directory": "diffusion_models"
           }
         ]
       },
       "title": "Load Kandinsky6 SR DiT",
       "widgets_values": [
-        "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/transformer/diffusion_pytorch_model.safetensors",
+        "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/transformer/diffusion_pytorch_model.safetensors",
         "default"
       ]
     },
@@ -380,22 +380,22 @@
         "cnr_id": "kandinsky6-sr",
         "models": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/vae/diffusion_pytorch_model.safetensors",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/vae/diffusion_pytorch_model.safetensors",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/vae/diffusion_pytorch_model.safetensors",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/vae/diffusion_pytorch_model.safetensors",
             "directory": "diffusion_models"
           }
         ],
         "kandinsky6_required_files": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/vae/config.json",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/vae/config.json",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/vae/config.json",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/vae/config.json",
             "directory": "diffusion_models"
           }
         ]
       },
       "title": "Load Kandinsky6 SR VAE",
       "widgets_values": [
-        "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/vae/diffusion_pytorch_model.safetensors"
+        "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/vae/diffusion_pytorch_model.safetensors"
       ]
     },
     {
@@ -428,22 +428,22 @@
         "cnr_id": "kandinsky6-sr",
         "models": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/latent_upscaler/diffusion_pytorch_model.safetensors",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/latent_upscaler/diffusion_pytorch_model.safetensors",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/latent_upscaler/diffusion_pytorch_model.safetensors",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/latent_upscaler/diffusion_pytorch_model.safetensors",
             "directory": "diffusion_models"
           }
         ],
         "kandinsky6_required_files": [
           {
-            "name": "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/latent_upscaler/config.json",
-            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/latent_upscaler/config.json",
+            "name": "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/latent_upscaler/config.json",
+            "url": "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/latent_upscaler/config.json",
             "directory": "diffusion_models"
           }
         ]
       },
       "title": "Load Latent Upscaler (x2 / x4)",
       "widgets_values": [
-        "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/latent_upscaler/diffusion_pytorch_model.safetensors",
+        "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/latent_upscaler/diffusion_pytorch_model.safetensors",
         "2x"
       ]
     },

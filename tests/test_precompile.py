@@ -49,7 +49,7 @@ def test_clip_base_follows_the_aspect_ratio(source_hw: tuple[int, int], expected
 def test_compile_only_the_requested_base() -> None:
     components = _components()
     factor = constants.VAE_SPATIAL_FACTOR
-    t_latent = (constants.MAX_NUM_FRAMES - 1) // constants.VAE_TEMPORAL_FACTOR + 1
+    t_latent = (constants.TRAINED_NUM_FRAMES - 1) // constants.VAE_TEMPORAL_FACTOR + 1
 
     compile_vae_decode(components, "cpu", bases=[(512, 768)])
 

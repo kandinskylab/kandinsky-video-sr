@@ -4,16 +4,18 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kandinsky-6-sr"
-version = "1.2.0"
+version = "2.0.0"
 description = "Kandinsky 6 video super-resolution: tiled latent-upscaler + DiT inference"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE", "LICENSE-APACHE"]
 requires-python = ">=3.12,<3.15"
 dependencies = [
+    # Diffusers loads the fp32-kept modules of the SR transformer only through accelerate.
+    "accelerate>=0.31.0",
     "av>=18.0.0",
     "cyclopts>=4.22.0",
-    "diffusers>=0.39.0",
+    "diffusers>=0.42.0",
     "einops>=0.8.2",
     "huggingface-hub>=1.0.0",
     "loguru>=0.7.3",
@@ -25,6 +27,8 @@ dependencies = [
     "torch>=2.10.0",
     "torchvision>=0.25.0",
     "tqdm>=4.67.0",
+    # Diffusers exposes Kandinsky6SRPipeline only when transformers is installed.
+    "transformers>=4.41.2",
 ]
 
 [project.optional-dependencies]

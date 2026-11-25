@@ -25,19 +25,9 @@ INSTRUCT_TYPE = 'noise'
 
 SR_COMMON = {'fps': 24, 'scale_factor': (1.0, 2.0, 2.0), 'visual_size': 512}
 
-# Sampling of the flow-matching checkpoint (Kandinsky-6.0-VSR-5s).
-EULER_SAMPLING = {'lq_noise_scale': 0.7, 'lq_noise_type': 'ddpm', 'scheduler_scale': 5.0}
-
-# Sampling of the distilled pi-Flow checkpoint (Kandinsky-6.0-VSR-distilled2steps-5s).
-PIFLOW_SAMPLING = {'eps': 1e-06,
- 'final_step_size_scale': 0.5,
- 'lq_noise_scale': 0.7,
- 'lq_noise_type': 'ddpm',
- 'n_grid': 10,
- 'nfe': 2,
- 'num_policy_substeps': 128,
- 'scheduler_scale': 3.5,
- 'shift': 3.5}
+# Output-head grid of the released pi-Flow DiT, for the architecture check only;
+# sampling settings are read from each model's Diffusers bundle.
+PIFLOW_N_GRID = 10
 
 VAE = {'name': 'video-kvae', 'spatial_factor': 16, 'temporal_factor': 4}
 
@@ -45,7 +35,7 @@ RUN_DEFAULTS = {'num_steps': 5, 'overlap': 0.2, 'seed': 42, 'tiles_batch_size': 
 
 RESOLUTIONS = {512: ((512, 512), (512, 768), (768, 512))}
 TARGET_FPS = 24
-MAX_NUM_FRAMES = 121
+MAX_NUM_FRAMES = 361
 RESAMPLE_FPS_TOLERANCE = 1.5
 RESIZE_FRAME_CHUNK = 8
 TARGET_RESOLUTIONS = {'2k': ((1440, 2560), (1440, 1440), (2560, 1440)),

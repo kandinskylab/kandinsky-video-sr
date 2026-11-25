@@ -40,7 +40,7 @@ or choose **Kandinsky 6 → Kandinsky6 SR — Download models** from the top men
 
 The button downloads the VSR DiT, KVAE and both latent-upscaler entries,
 including all required JSON configs. Everything goes into
-`ComfyUI/models/diffusion_models/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/`.
+`ComfyUI/models/diffusion_models/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/`.
 Existing files and configured extra model paths are reused. Nothing is downloaded
 during extension install or startup. Allow enough disk space for the HF weights.
 
@@ -53,21 +53,24 @@ Download these eight files separately if you prefer not to use the button.
 All destinations below are relative to this folder in your **ComfyUI directory**:
 
 ```text
-models/diffusion_models/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/
+models/diffusion_models/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/
 ```
 
 | Download | Destination inside that folder |
 | --- | --- |
-| [SR DiT weights](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors) | `transformer/diffusion_pytorch_model.safetensors` |
-| [SR DiT config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/transformer/config.json) | `transformer/config.json` |
-| [KVAE weights](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/vae/diffusion_pytorch_model.safetensors) | `vae/diffusion_pytorch_model.safetensors` |
-| [KVAE config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/vae/config.json) | `vae/config.json` |
-| [Latent-upscaler weights — both 2x and 4x](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/latent_upscaler/diffusion_pytorch_model.safetensors) | `latent_upscaler/diffusion_pytorch_model.safetensors` |
-| [Latent-upscaler config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/latent_upscaler/config.json) | `latent_upscaler/config.json` |
-| [Model index](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/model_index.json) | `model_index.json` |
-| [Scheduler config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers/resolve/main/scheduler/scheduler_config.json) | `scheduler/scheduler_config.json` |
+| [SR DiT weights](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors) | `transformer/diffusion_pytorch_model.safetensors` |
+| [SR DiT config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/transformer/config.json) | `transformer/config.json` |
+| [KVAE weights](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/vae/diffusion_pytorch_model.safetensors) | `vae/diffusion_pytorch_model.safetensors` |
+| [KVAE config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/vae/config.json) | `vae/config.json` |
+| [Latent-upscaler weights — both 2x and 4x](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/latent_upscaler/diffusion_pytorch_model.safetensors) | `latent_upscaler/diffusion_pytorch_model.safetensors` |
+| [Latent-upscaler config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/latent_upscaler/config.json) | `latent_upscaler/config.json` |
+| [Model index](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/model_index.json) | `model_index.json` |
+| [Scheduler config](https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers/resolve/main/scheduler/scheduler_config.json) | `scheduler/scheduler_config.json` |
 
-Create the subfolders and keep all JSON configs at the paths shown. The single
+Create the subfolders and keep all JSON configs at the paths shown. The SR DiT
+reads its sampler settings (π-Flow shift and schedule, start noise) from
+`transformer/config.json` and `scheduler/scheduler_config.json` next to its weights,
+so every released bundle runs with the settings it was trained with. The single
 latent-upscaler weights file contains both scales; no separate 4x download is needed.
 For another drive, configure an extra `diffusion_models` path or use a symbolic
 link (directory junction on Windows), preserving the bundle's folder layout.
@@ -88,7 +91,7 @@ select an input video and the three model files, then run:
 
 Choose `2x` in the upscaler loader for **2x/2.25x**, or `4x` for **4x**; set the
 corresponding scale in **Kandinsky6 SR Upscale**. Start with the other defaults.
-Frames are resampled toward 24 fps and clipped to at most 121 frames; audio is
+Frames are resampled toward 24 fps and clipped to at most 361 frames (15 s); audio is
 trimmed to match. Use the VSR node's image, frame-rate and audio outputs together,
 as the template does.
 

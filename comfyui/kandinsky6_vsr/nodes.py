@@ -521,7 +521,7 @@ class Kandinsky6VSRUpscale:
     FUNCTION = "upscale"
     CATEGORY = CATEGORY
     DESCRIPTION = (
-        "Upscale video by x2, x2.25 or x4. Frames are aligned to the model's 121-frame budget at up to "
+        "Upscale video by x2, x2.25 or x4. Frames are aligned to the model's 361-frame (15 s) budget at up to "
         "24 fps; the audio is trimmed to the output duration."
     )
 

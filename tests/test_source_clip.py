@@ -1,6 +1,6 @@
 """Source-clip contract: frame budget truncation is announced, audio never outlives the picture.
 
-What & why: both hosts (CLI, ComfyUI) feed at most 121 frames to the model,
+What & why: both hosts (CLI, ComfyUI) feed at most 361 frames (15 s) to the model,
 but a longer source used to be cut silently and its whole audio track was
 muxed, so the output played sound past the last frame. A waveform handed over
 as decode-sized chunks must also survive whole: ``mux_video_audio`` documents
@@ -35,9 +35,16 @@ def warnings() -> list[str]:
 
 
 def test_truncation_to_the_frame_budget_is_logged(warnings: list[str]) -> None:
-    clip = clip_to_aligned_frames(torch.zeros(300, 3, 4, 4, dtype=torch.uint8))
+    clip = clip_to_aligned_frames(torch.zeros(400, 3, 4, 4, dtype=torch.uint8))
     assert clip.shape[0] == MAX_NUM_FRAMES
-    assert any("only the first 121" in message for message in warnings)
+    assert any("only the first 361" in message for message in warnings)
+
+
+@pytest.mark.parametrize("num_frames", [121, 241, 361])  # 5 s, 10 s and 15 s at 24 fps
+def test_clips_up_to_15_seconds_are_kept_whole(warnings: list[str], num_frames: int) -> None:
+    clip = clip_to_aligned_frames(torch.zeros(num_frames, 3, 4, 4, dtype=torch.uint8))
+    assert clip.shape[0] == num_frames
+    assert warnings == []
 
 
 def test_clip_within_the_budget_logs_nothing(warnings: list[str]) -> None:

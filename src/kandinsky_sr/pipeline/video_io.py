@@ -141,11 +141,12 @@ def clip_to_aligned_frames(video: torch.Tensor, max_num_frames: int = MAX_NUM_FR
     if 0 < max_num_frames < video.shape[0]:
         logger.warning(
             "Clip has {} frames; only the first {} ({:.1f} s at {} fps, the model's budget) are super-resolved. "
-            "Split longer sources into 5 s pieces.",
+            "Split longer sources into pieces of at most {:.0f} s.",
             video.shape[0],
             max_num_frames,
             max_num_frames / TARGET_FPS,
             TARGET_FPS,
+            max_num_frames / TARGET_FPS,
         )
         video = video[:max_num_frames]
     aligned = 1 + 8 * ((video.shape[0] - 1) // 8) if video.shape[0] > 0 else 0

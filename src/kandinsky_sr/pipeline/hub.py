@@ -4,7 +4,7 @@ The three model-path settings (``sr.checkpoint_path``, ``sr.vae_path``,
 ``sr.latent_upscaler_config``) accept, in place of a local path:
 
 * a Hub repo id (``namespace/name``) — a ``Kandinsky6SRPipeline`` Diffusers
-  bundle such as ``kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers``
+  bundle such as ``kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers``
   (each setting takes its own component of it), or a native single-model repo;
 * one component of a bundle repo: ``namespace/name/transformer``,
   ``namespace/name/vae`` or ``namespace/name/latent_upscaler``;

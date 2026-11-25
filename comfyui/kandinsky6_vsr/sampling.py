@@ -2,7 +2,8 @@
 
 The released checkpoints denoise one tile batch at a time, starting at sigma 1
 from the degraded upscaled latent rather than from Gaussian noise (instruct
-type "noise"). The flow-matching checkpoint runs ComfyUI's Euler sampler on
+type "noise"). Shifts, the pi-Flow schedule and the start noise come from the
+checkpoint's Diffusers bundle (:mod:`.bundle_sampling`). The flow-matching checkpoint runs ComfyUI's Euler sampler on
 the canonical shifted schedule; the distilled checkpoint runs the canonical
 pi-Flow segment loop on the native multi-grid DiT. Tensors handed in and out
 use the canonical ``(N, H, W, C)`` tile layout, ``N = tiles * frames``.
@@ -13,21 +14,17 @@ import comfy.sample
 import comfy.samplers
 import torch
 
+from .bundle_sampling import bundle_sampling as sampling_settings
 from .runtime.core.algo.piflow_math import DXPolicy, policy_rollout_fm, shift_timesteps
-from .sr_contract import EULER_SAMPLING, PIFLOW_SAMPLING
 
 
 def is_piflow(model_patcher):
     return int(getattr(model_patcher.model.diffusion_model, "n_grid", 1)) > 1
 
 
-def sampling_settings(model_patcher):
-    return PIFLOW_SAMPLING if is_piflow(model_patcher) else EULER_SAMPLING
-
-
 def steps_per_tile(model_patcher, num_steps):
     """Network evaluations per tile batch (``num_steps`` grid points = N - 1 steps)."""
-    return int(PIFLOW_SAMPLING["nfe"]) if is_piflow(model_patcher) else int(num_steps) - 1
+    return int(sampling_settings(model_patcher)["nfe"]) if is_piflow(model_patcher) else int(num_steps) - 1
 
 
 def degraded_start(lq_latent, *, seed, noise_scale, noise_type):
@@ -64,7 +61,7 @@ def sample_euler(model_patcher, start, batch, num_steps, progress=None):
     """
     noise = to_comfy(start, batch).float()
     conditioning = [[torch.zeros((1, 1, 1)), {}]]
-    sigmas = euler_sigmas(num_steps, float(EULER_SAMPLING["scheduler_scale"]))
+    sigmas = euler_sigmas(num_steps, float(sampling_settings(model_patcher)["scheduler_scale"]))
 
     def callback(step, x0, x, total_steps):
         if progress is not None:
@@ -99,7 +96,7 @@ def sample_piflow(model_patcher, start, batch, progress=None, memory_required=0)
     device = model_patcher.load_device
     transformer_options = dict(model_patcher.model_options.get("transformer_options", {}))
 
-    params = PIFLOW_SAMPLING
+    params = sampling_settings(model_patcher)
     nfe, shift, eps = int(params["nfe"]), float(params["shift"]), float(params["eps"])
     final_step = max(float(params["final_step_size_scale"]), eps)
     one_minus_final = 1.0 - final_step

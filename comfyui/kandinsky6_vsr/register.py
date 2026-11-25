@@ -1,15 +1,17 @@
-"""Register the Kandinsky 6 SR DiT as a ComfyUI model type and checkpoint detector."""
+"""Register the Kandinsky 6 SR DiT as a ComfyUI model type, checkpoint detector and bundle-aware load."""
 
 from functools import wraps
 
 import comfy.model_detection
+import comfy.sd
 import comfy.supported_models
 
+from .bundle_sampling import attach_bundle_sampling
 from .checkpoint_keys import native_dit_state
-from .sr_contract import DIT_CONFIG, PIFLOW_SAMPLING
+from .sr_contract import DIT_CONFIG, PIFLOW_N_GRID
 from .supported_model import SR_IMAGE_MODEL, Kandinsky6SR
 
-_DETECTOR_MARKER = "_kandinsky6_sr_detector"
+_WRAPPER_MARKER = "_kandinsky6_sr_detector"
 _SR_MARKER_KEYS = (
     "pooled_bias",
     "visual_transformer_blocks.0.visual_modulation.out_layer.weight",
@@ -55,7 +57,7 @@ def detect_sr_dit(state_dict, key_prefix):
     output_dim = shape("out_layer.out_layer.weight")[0]
     out_visual_dim = int(DIT_CONFIG["out_visual_dim"])
     n_grid = output_dim // out_visual_dim
-    if output_dim % out_visual_dim or n_grid not in (1, int(PIFLOW_SAMPLING["n_grid"])):
+    if output_dim % out_visual_dim or n_grid not in (1, PIFLOW_N_GRID):
         mismatches.append(f"output head: {output_dim} channels")
     if f"{key_prefix}text_embeddings.in_layer.weight" in state_dict:
         mismatches.append("use_text: the released SR DiT is text-free")
@@ -76,21 +78,46 @@ def _register_model(model_class):
         comfy.supported_models.models.append(model_class)
 
 
-def register():
-    _register_model(Kandinsky6SR)
+def _is_installed(function):
+    while function is not None:
+        if getattr(function, _WRAPPER_MARKER, False) is True:
+            return True
+        function = getattr(function, "__wrapped__", None)
+    return False
 
-    current = comfy.model_detection.detect_unet_config
-    wrapped = current
-    while wrapped is not None:
-        if getattr(wrapped, _DETECTOR_MARKER, False):
-            return
-        wrapped = getattr(wrapped, "__wrapped__", None)
 
-    @wraps(current)
+def _install(module, name, make_wrapper):
+    """Replace ``module.name`` with ``make_wrapper(current)`` once, also across node-pack reloads."""
+    current = getattr(module, name)
+    if _is_installed(current):
+        return
+    wrapper = wraps(current)(make_wrapper(current))
+    setattr(wrapper, _WRAPPER_MARKER, True)
+    setattr(module, name, wrapper)
+
+
+def _sr_detector(current):
     def detect_unet_config(state_dict, key_prefix, *args, **kwargs):
         if is_sr_state_dict(state_dict, key_prefix):
             return detect_sr_dit(state_dict, key_prefix)
         return current(state_dict, key_prefix, *args, **kwargs)
 
-    setattr(detect_unet_config, _DETECTOR_MARKER, True)
-    comfy.model_detection.detect_unet_config = detect_unet_config
+    return detect_unet_config
+
+
+def _bundle_aware_loader(current):
+    """``Load Diffusion Model`` knows only the weights path: read the SR sampling settings beside it."""
+
+    def load_diffusion_model(unet_path, *args, **kwargs):
+        model = current(unet_path, *args, **kwargs)
+        if hasattr(model.model.diffusion_model, "n_grid"):
+            attach_bundle_sampling(model, unet_path)
+        return model
+
+    return load_diffusion_model
+
+
+def register():
+    _register_model(Kandinsky6SR)
+    _install(comfy.model_detection, "detect_unet_config", _sr_detector)
+    _install(comfy.sd, "load_diffusion_model", _bundle_aware_loader)

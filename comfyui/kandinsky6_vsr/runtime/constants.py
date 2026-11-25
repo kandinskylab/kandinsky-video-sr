@@ -43,9 +43,12 @@ RESOLUTIONS: dict[int, list[tuple[int, int]]] = {
 
 # --- Model / pipeline contract (NOT configurable) ---
 # The SR model was trained on 5 s clips at 24 fps -> 121 pixel frames
-# (= 1 + 8*15); feeding more frames or another rate is out of contract.
+# (= 1 + 8*15); another rate is out of contract. Longer clips work too: the
+# input cap is 15 s (361 = 1 + 8*45 frames, 91 latents, within the DiT's
+# 128-position temporal RoPE).
 TARGET_FPS: int = 24
-MAX_NUM_FRAMES: int = 121
+TRAINED_NUM_FRAMES: int = 121
+MAX_NUM_FRAMES: int = 361
 # Treat ``|src_fps - TARGET_FPS| < tolerance`` as already-at-target (no
 # resample): covers 23.98 (NTSC) and 25.00 sources.
 RESAMPLE_FPS_TOLERANCE: float = 1.5

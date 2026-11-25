@@ -21,10 +21,10 @@ from unittest import mock
 import pytest
 import torch
 
-from .conftest import COMFYUI_PACK_DIR
+from .conftest import COMFYUI_PACK_DIR, PIFLOW_GRID_POINTS, PIFLOW_SHIFT, WEIGHTS_NAME, BundleFactory
 
 WORKFLOW = COMFYUI_PACK_DIR / "example_workflows" / "Kandinsky 6.0 Video Super Resolution.json"
-BUNDLE = "Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers"
+BUNDLE = "Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers"
 
 
 @pytest.fixture
@@ -48,6 +48,8 @@ def native():
             supported=importlib.import_module("kandinsky6_vsr.supported_model"),
             contract=importlib.import_module("kandinsky6_vsr.sr_contract"),
             detection=importlib.import_module("comfy.model_detection"),
+            sd=importlib.import_module("comfy.sd"),
+            bundle_sampling=importlib.import_module("kandinsky6_vsr.bundle_sampling"),
             models=importlib.import_module("comfy.supported_models"),
             motion=importlib.import_module(
                 "kandinsky6_vsr.runtime.core.components.latent_upscaler.model.motion_correspondence"
@@ -109,7 +111,7 @@ def test_comfy_image_conversion_clamps_out_of_range_values(native):
     assert video.flatten().tolist() == [0, 0, 255]
 
 
-@pytest.mark.parametrize(("frames", "fps", "expected_frames"), [(150, 48.0, 73), (400, 24.0, 121)])
+@pytest.mark.parametrize(("frames", "fps", "expected_frames"), [(150, 48.0, 73), (400, 24.0, 361)])
 def test_source_clip_resampling_and_frame_budget(native, frames, fps, expected_frames):
     video, output_fps = native.nodes.resample_to_target_fps(torch.zeros(frames, 3, 8, 8, dtype=torch.uint8), fps)
     clip = native.nodes.clip_to_aligned_frames(video)
@@ -188,12 +190,13 @@ def test_nabla_choice_is_scoped_to_a_patcher_clone(native, use_nabla):
     assert "k6_vsr_disable_nabla" not in original.model_options["transformer_options"]
 
 
-def test_disabled_nabla_does_not_warm_or_compile_kernels(native):
+def test_disabled_nabla_does_not_warm_or_compile_kernels(native, make_bundle: BundleFactory):
     patcher = SimpleNamespace(
         model=SimpleNamespace(diffusion_model=SimpleNamespace(n_grid=1), get_dtype_inference=lambda: torch.float32),
         model_options={"transformer_options": {"k6_vsr_disable_nabla": True}},
         load_device=torch.device("cpu"),
     )
+    native.bundle_sampling.attach_bundle_sampling(patcher, make_bundle("flow_matching") / "transformer" / WEIGHTS_NAME)
     run = native.nodes._SRRun(patcher, None, None, {}, None)
     with mock.patch.object(native.nodes, "warmup_nabla") as warmup:
         assert run.tiles([], None, seed=42, num_steps=5, tiles_batch_size=1) == []
@@ -212,6 +215,30 @@ def test_registration_is_idempotent_and_preserves_foreign_models(native):
         assert native.detection.detect_unet_config is installed
         assert native.models.models == [native.supported.Kandinsky6SR]
         assert installed({}, "") == {"foreign": True}
+
+
+def _patcher_with_dit(**attributes):
+    return SimpleNamespace(model=SimpleNamespace(diffusion_model=SimpleNamespace(**attributes)))
+
+
+def test_diffusion_model_loader_reads_sampling_from_the_bundle(native, make_bundle: BundleFactory):
+    patcher = _patcher_with_dit(n_grid=PIFLOW_GRID_POINTS)
+    weights = make_bundle("piflow") / "transformer" / WEIGHTS_NAME
+    with mock.patch.object(native.sd, "load_diffusion_model", mock.Mock(return_value=patcher)):
+        native.register.register()
+        installed = native.sd.load_diffusion_model
+        native.register.register()
+        assert native.sd.load_diffusion_model is installed
+        assert installed(str(weights), model_options={}) is patcher
+    assert native.bundle_sampling.bundle_sampling(patcher)["shift"] == PIFLOW_SHIFT
+
+
+def test_diffusion_model_loader_leaves_foreign_models_alone(native, tmp_path):
+    foreign = SimpleNamespace(model=SimpleNamespace(diffusion_model=torch.nn.Identity()))
+    with mock.patch.object(native.sd, "load_diffusion_model", mock.Mock(return_value=foreign)):
+        native.register.register()
+        assert native.sd.load_diffusion_model(str(tmp_path / "other.safetensors")) is foreign
+    assert not hasattr(foreign.model.diffusion_model, "k6_sr_sampling")
 
 
 @pytest.mark.parametrize("n_grid", [1, 10])

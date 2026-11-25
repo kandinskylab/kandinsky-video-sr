@@ -1,7 +1,7 @@
 [project]
 name = "kandinsky6-sr"
 description = "ComfyUI nodes for Kandinsky 6 video super-resolution (x2 / x2.25 / x4, tiled latent upscaler + DiT)."
-version = "0.1.2"
+version = "0.1.3"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
@@ -17,7 +17,7 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/kandinskylab/kandinsky-6-sr"
 Documentation = "https://github.com/kandinskylab/kandinsky-6-sr/tree/main/comfyui"
-"Model (SR bundle)" = "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers"
+"Model (SR bundle)" = "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers"
 
 [tool.comfy]
 PublisherId = "kandinskylab"

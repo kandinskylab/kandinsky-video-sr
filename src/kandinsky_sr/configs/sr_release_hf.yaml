@@ -9,7 +9,7 @@
 # Set vae_path / latent_upscaler_config only to take those models from
 # somewhere else (another bundle, "<repo>/vae", or native checkpoints).
 sr:
-  checkpoint_path: kandinskylab/Kandinsky-6.0-VSR-distilled2steps-5s-Diffusers
+  checkpoint_path: kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers
   resolution_scale: 2
   # CUDA device to run on ("cuda:0", "cuda:1", ...); --device overrides.
   device: cuda:0

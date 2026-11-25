@@ -163,7 +163,7 @@ def compile_vae_decode(components: Any, device: int | str, bases: Sequence[tuple
     torch.compile (and magi) build a graph the first time they see a shape,
     so the only way to compile ahead of a run is a forward of that shape. The
     decode tile is fixed by the model, not the clip: ``base / VAE_SPATIAL_FACTOR``
-    latent pixels over ``MAX_NUM_FRAMES`` frames — 32x32, 32x48 and 48x32 for
+    latent pixels over ``TRAINED_NUM_FRAMES`` frames — 32x32, 32x48 and 48x32 for
     the kvae 512 family. A clip with another frame count only re-shapes the
     last temporal segment. Compiling one base is enough for one clip (see
     :func:`clip_base_resolution`); the magi backend pins a copy of the decoder
@@ -180,7 +180,7 @@ def compile_vae_decode(components: Any, device: int | str, bases: Sequence[tuple
     """
     vae, dit = components.vae, components.dit
     visual_size = int(components.sr_params.visual_size[0])
-    t_latent = (constants.MAX_NUM_FRAMES - 1) // constants.VAE_TEMPORAL_FACTOR + 1
+    t_latent = (constants.TRAINED_NUM_FRAMES - 1) // constants.VAE_TEMPORAL_FACTOR + 1
     dtype = next(vae.parameters(), torch.zeros(1, dtype=torch.bfloat16)).dtype
     for base_h, base_w in bases if bases is not None else constants.RESOLUTIONS[visual_size]:
         h, w = base_h // constants.VAE_SPATIAL_FACTOR, base_w // constants.VAE_SPATIAL_FACTOR
