@@ -15,8 +15,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/kandinskylab/kandinsky-6-sr"
-Documentation = "https://github.com/kandinskylab/kandinsky-6-sr/tree/main/comfyui"
+Repository = "https://github.com/kandinskylab/kandinsky-video-sr"
+Documentation = "https://github.com/kandinskylab/kandinsky-video-sr/tree/main/comfyui"
 "Model (SR bundle)" = "https://huggingface.co/kandinskylab/Kandinsky-6.0-VSR-2.0-distilled2steps-Diffusers"
 
 [tool.comfy]
